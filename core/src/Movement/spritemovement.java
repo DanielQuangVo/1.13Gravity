@@ -15,7 +15,6 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
     Texture img;
     Sprite sprite;
     boolean isRight = false, isLeft = false, isUp = false;
-    float fgravity;
 
     @Override
     public void create() {
@@ -34,12 +33,9 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
             sprite.translateX(3f);
         } else if (isLeft) {
             sprite.translateX(-3f);
-        } else if (isUp) {
-            fgravity = sprite.getY();
+        }else if(isUp){
             sprite.translateY(3f);
-            Gravity(fgravity);
         }
-
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -48,12 +44,7 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
         batch.end();
     }
 
-    public void Gravity(float fgravity) {
-        while (sprite.getY() > fgravity) {
-        sprite.translateY(-.03f);
-        }
-
-    }
+    
 
     @Override
     public boolean keyDown(int keycode) {
