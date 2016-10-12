@@ -14,14 +14,20 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
     SpriteBatch batch;
     Texture img;
     Sprite sprite;
-    boolean isRight = false, isLeft = false, isUp = false;
+    boolean bJump, isRight, isLeft;
+    float fX, fY, fGrav, fGravAcel, fJump, fXSpeed;
 
     @Override
     public void create() {
+        bJump = false;
+        isRight = false;
+        isLeft = false;
+        fGrav = 5f;
+        fGravAcel = 1f;
+        fXSpeed = 10f;
         batch = new SpriteBatch();
         img = new Texture("Dinosaur.png");
         sprite = new Sprite(img);
-        sprite.setPosition(Gdx.graphics.getWidth() / 2 - img.getWidth() / 2, Gdx.graphics.getHeight() / 2 - img.getHeight() / 2);
         sprite.setScale(.75f);
         Gdx.input.setInputProcessor(this);
 
@@ -29,13 +35,30 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
 
     @Override
     public void render() {
-        if (isRight) {
-            sprite.translateX(3f);
-        } else if (isLeft) {
-            sprite.translateX(-3f);
-        }else if(isUp){
-            sprite.translateY(3f);
+        if (bJump) {
+            fJump = 30f;
+            bJump = false;
         }
+        if (fJump > 0) {
+            fJump--;
+        } else {
+            fJump = 0;
+        }
+        fGrav += fGravAcel;
+        if (fY > 0) {
+            fY -= fGrav;
+        } else {
+            fGrav = 5f;
+            fY = 0;
+        }
+        fY += fJump;
+        if (isLeft) {
+            fX -= fXSpeed;
+        }
+        if (isRight) {
+            fX += fXSpeed;
+        }
+        sprite.setPosition(fX, fY);
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
@@ -44,28 +67,29 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
         batch.end();
     }
 
-    
-
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.LEFT) {
+        if (keycode == Input.Keys.SPACE) {
+            bJump = true;
+        }
+        if (keycode == Input.Keys.A) {
             isLeft = true;
-        } else if (keycode == Input.Keys.RIGHT) {
+
+        }
+        if (keycode == Input.Keys.D) {
             isRight = true;
-        } else if (keycode == Input.Keys.UP) {
-            isUp = true;
+
         }
         return false;
     }
 
     @Override
     public boolean keyUp(int keycode) {
-        if (keycode == Input.Keys.RIGHT) {
-            isRight = false;
-        } else if (keycode == Input.Keys.LEFT) {
+        if (keycode == Input.Keys.A) {
             isLeft = false;
-        } else if (keycode == Input.Keys.UP) {
-            isUp = false;
+        }
+        else if (keycode == Input.Keys.D) {
+            isRight = false;
         }
         return false;
     }
