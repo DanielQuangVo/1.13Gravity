@@ -8,77 +8,68 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+import java.util.Vector;
 
 public class spritemovement extends ApplicationAdapter implements InputProcessor {
 
     SpriteBatch batch;
     Texture img;
     Sprite sprite;
-    boolean bJump, isRight, isLeft;
-    float fX, fY, fGrav, fGravAcel, fJump, fXSpeed;
+    boolean bJump;
+    int nJumpTime = 10;
+    Vector2 vPos, vDir, vGrav;
 
     @Override
     public void create() {
-        bJump = false;
-        isRight = false;
-        isLeft = false;
-        fGrav = 5f;
-        fGravAcel = 1f;
-        fXSpeed = 10f;
+
         batch = new SpriteBatch();
         img = new Texture("Dinosaur.png");
         sprite = new Sprite(img);
         sprite.setScale(.75f);
+        vPos = new Vector2(sprite.getX(), sprite.getY());
+        vDir = new Vector2(0, 0);
+        vGrav = new Vector2(0, 0);
         Gdx.input.setInputProcessor(this);
-
     }
 
     @Override
     public void render() {
+        System.out.println(vDir);
         if (bJump) {
-            fJump = 30f;
+            vGrav.set(0, (float) (vGrav.y * 1.1));
+        }
+        if (vPos.y < 0) {
+            vDir.set(vDir.x, 0);
+            vGrav.set(0,0);
+            vPos.set(vPos.x, 0);
             bJump = false;
         }
-        if (fJump > 0) {
-            fJump--;
-        } else {
-            fJump = 0;
-        }
-        fGrav += fGravAcel;
-        if (fY > 0) {
-            fY -= fGrav;
-        } else {
-            fGrav = 5f;
-            fY = 0;
-        }
-        fY += fJump;
-        if (isLeft) {
-            fX -= fXSpeed;
-        }
-        if (isRight) {
-            fX += fXSpeed;
-        }
-        sprite.setPosition(fX, fY);
+        vDir.add(vGrav);
+        vPos.add(vDir);
+        sprite.setPosition(vPos.x, vPos.y);
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
         batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getWidth() / 2, sprite.getHeight() / 2,
                 sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
         batch.end();
+        
     }
 
     @Override
     public boolean keyDown(int keycode) {
-        if (keycode == Input.Keys.SPACE) {
+        if (keycode == Input.Keys.SPACE && bJump == false) {
+            vDir.set(0, 25);
+            vGrav.set(0,(float) -0.5);
             bJump = true;
         }
         if (keycode == Input.Keys.A) {
-            isLeft = true;
+            vDir.set(-10, 0);
 
         }
         if (keycode == Input.Keys.D) {
-            isRight = true;
-
+            vDir.set(10, 0);
         }
         return false;
     }
@@ -86,10 +77,9 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.A) {
-            isLeft = false;
-        }
-        else if (keycode == Input.Keys.D) {
-            isRight = false;
+            vDir.set(0, 0);
+        } else if (keycode == Input.Keys.D) {
+            vDir.set(0, 0);
         }
         return false;
     }
