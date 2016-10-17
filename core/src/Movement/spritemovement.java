@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import java.util.Vector;
 
 public class spritemovement extends ApplicationAdapter implements InputProcessor {
 
@@ -35,13 +34,12 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
 
     @Override
     public void render() {
-        System.out.println(vDir);
         if (bJump) {
             vGrav.set(0, (float) (vGrav.y * 1.1));
         }
         if (vPos.y < 0) {
             vDir.set(vDir.x, 0);
-            vGrav.set(0,0);
+            vGrav.set(0, 0);
             vPos.set(vPos.x, 0);
             bJump = false;
         }
@@ -54,22 +52,20 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
         batch.draw(sprite, sprite.getX(), sprite.getY(), sprite.getWidth() / 2, sprite.getHeight() / 2,
                 sprite.getWidth(), sprite.getHeight(), sprite.getScaleX(), sprite.getScaleY(), sprite.getRotation());
         batch.end();
-        
+
     }
 
     @Override
     public boolean keyDown(int keycode) {
         if (keycode == Input.Keys.SPACE && bJump == false) {
-            vDir.set(0, 25);
-            vGrav.set(0,(float) -0.5);
+            vDir.set((float) vDir.x, 25);
+            vGrav.set(0, (float) -0.5);
             bJump = true;
-        }
-        if (keycode == Input.Keys.A) {
-            vDir.set(-10, 0);
+        } else if (keycode == Input.Keys.A) {
+            vDir.set(-10, (float) vDir.y);
 
-        }
-        if (keycode == Input.Keys.D) {
-            vDir.set(10, 0);
+        } else if (keycode == Input.Keys.D) {
+            vDir.set(10, (float) vDir.y);
         }
         return false;
     }
@@ -77,9 +73,9 @@ public class spritemovement extends ApplicationAdapter implements InputProcessor
     @Override
     public boolean keyUp(int keycode) {
         if (keycode == Input.Keys.A) {
-            vDir.set(0, 0);
+            vDir.set(0, (float) vDir.y);
         } else if (keycode == Input.Keys.D) {
-            vDir.set(0, 0);
+            vDir.set(0, (float) vDir.y);
         }
         return false;
     }
